@@ -71,3 +71,21 @@ def one_time_pickup(request):
         }
         return render(request, 'customers/one_time.html', context)
 
+@login_required
+def edit_profile(request):
+    logged_in_user = request.user
+    logged_in_customer = Customer.objects.get(user=logged_in_user)
+    if request.method == "POST":
+        name_from_form = request.POST.get('name')
+        address_from_form = request.POST.get('address')
+        zip_from_form = request.POST.get('zip_code')
+        logged_in_customer.name = name_from_form
+        logged_in_customer.address = address_from_form
+        logged_in_customer.zip_code = zip_from_form
+        logged_in_customer.save()
+        return HttpResponseRedirect(reverse('customers:index'))
+    else:
+        context = {
+            'logged_in_customer': logged_in_customer
+        }
+        return render(request, 'customers/edit_profile.html', context)
